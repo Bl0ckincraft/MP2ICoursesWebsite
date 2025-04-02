@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Custom styles
+:root {
+    --color-primary: #1a1a1a;
+    --color-secondary: #252525;
+    --color-accent: #333333;
+}
+
+input[type="number"]{
+    appearance: textfield;
+}
+
+body {
+    @apply bg-gray-900 text-gray-100;
+}
+
+.latex-input, .latex-editor {
+    @apply w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+}
+
+input {
+    margin-top: 8px;
+}
+
+// Smooth transitions
+a, button, input, .transition {
+    transition: all 0.2s ease;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+}
+
+// Form elements
+input, textarea, select {
+    @apply bg-gray-700 border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-transparent rounded-lg;
+
+    &:disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+}
+
+// Buttons
+.btn {
+    @apply px-4 py-2 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 transition;
+
+    &-primary {
+        @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+    }
+
+    &-secondary {
+        @apply bg-gray-700 text-white hover:bg-gray-600 focus:ring-gray-500;
+    }
+
+    &-danger {
+        @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    }
+}
+
+// Cards
+.card {
+    @apply bg-gray-800 rounded-xl border border-gray-700 overflow-hidden;
+
+    &-header {
+        @apply px-6 py-4 border-b border-gray-700;
+    }
+
+    &-body {
+        @apply p-6;
+    }
+}
+
+// Responsive sidebar
+@media (max-width: 768px) {
+    #sidebar {
+        @apply fixed inset-y-0 left-0 z-50 -translate-x-full;
+
+        &.open {
+            @apply translate-x-0;
+        }
+    }
+}

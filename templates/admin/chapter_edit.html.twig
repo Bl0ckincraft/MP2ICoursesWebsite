@@ -1,0 +1,482 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block page_title %}{{ chapter.displayName }} - {{ chapter.subject.displayName }}{% endblock %}
+
+{% block content %}
+    <div class="space-y-6">
+        <!-- Éléments de cours -->
+        <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-lg font-medium">Éléments de cours</h3>
+                <button onclick="document.getElementById('new-element-form').classList.toggle('hidden')"
+                        class="text-sm bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded-lg">
+                    + Ajouter un élément
+                </button>
+            </div>
+
+            <!-- Formulaire d'ajout -->
+            <div id="new-element-form" class="hidden px-6 py-4 border-b border-gray-700">
+                {{ form_start(elementForm) }}
+
+                <div class="flex flex-col my-3">
+                    {{ form_label(elementForm.elementType) }}
+                    {{ form_widget(elementForm.elementType, {
+                        'attr': {
+                            'class': 'p-3 mt-3'
+                        }
+                    }) }}
+                </div>
+                <div class="flex flex-col my-3">
+                    {{ form_label(elementForm.number) }}
+                    {{ form_widget(elementForm.number, {
+                        'attr': {
+                            'class': 'p-3 mt-3'
+                        }
+                    }) }}
+                </div>
+
+                {{ form_row(elementForm.statement, {
+                    'attr': {
+                        'class': 'latex-editor mt-3',
+                        'rows': 5
+                    }
+                }) }}
+
+                <!-- Section Details -->
+                <div class="my-3">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Détails</label>
+                    <div id="details-container"
+                         data-prototype="{{ form_widget(elementForm.details.vars.prototype)|e('html_attr') }}"
+                         data-index="{{ elementForm.details|length }}">
+                        {% for detail in elementForm.details %}
+                            <div class="detail-item mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                <div class="flex">
+                                    <div class="flex-1">
+                                        {{ form_widget(detail, {
+                                            'attr': {
+                                                'class': 'latex-input',
+                                                'rows': 3
+                                            }
+                                        }) }}
+                                        <div class="latex-preview prose prose-invert max-w-none p-3 bg-gray-900 rounded-lg mt-2"></div>
+                                    </div>
+                                    <button type="button" class="remove-item ml-2 text-red-500 hover:text-red-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-detail" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg mb-4">
+                        + Ajouter un détail
+                    </button>
+                </div>
+
+                <!-- Section Proofs -->
+                <div class="my-3">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Preuves</label>
+                    <div id="proofs-container"
+                         data-prototype="{{ form_widget(elementForm.proofs.vars.prototype)|e('html_attr') }}"
+                         data-index="{{ elementForm.proofs|length }}">
+                        {% for proof in elementForm.proofs %}
+                            <div class="proof-item mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                <div class="flex">
+                                    <div class="flex-1">
+                                        {{ form_widget(proof, {
+                                            'attr': {
+                                                'class': 'latex-input',
+                                                'rows': 3
+                                            }
+                                        }) }}
+                                        <div class="latex-preview prose prose-invert max-w-none p-3 bg-gray-900 rounded-lg mt-2"></div>
+                                    </div>
+                                    <button type="button" class="remove-item ml-2 text-red-500 hover:text-red-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-proof" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg mb-4">
+                        + Ajouter une preuve
+                    </button>
+                </div>
+
+                <div class="mt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="document.getElementById('new-element-form').classList.add('hidden')"
+                            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+                        Enregistrer
+                    </button>
+                </div>
+                {{ form_end(elementForm) }}
+            </div>
+
+            <!-- Liste des éléments existants -->
+            {% for element in chapter.elements|sort((a, b) => a.number <=> b.number) %}
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3">
+                                <span class="font-medium">{{ element.elementType.displayName }} #{{ element.number }}</span>
+                                <span class="text-xs px-2 py-1 bg-gray-700 rounded-full">{{ element.elementType.name }}</span>
+                            </div>
+
+                            <div class="prose prose-invert max-w-none mt-3">
+                                {{ element.statement|raw }}
+                            </div>
+
+                            {% if element.details is not empty %}
+                                <div class="mt-4">
+                                    <h5 class="text-sm font-medium text-gray-300 mb-2">Détails</h5>
+                                    <div class="prose prose-invert max-w-none">
+                                        {% for detail in element.details %}
+                                            <div class="mb-3 p-3 bg-gray-700/50 rounded-lg">{{ detail|raw }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if element.proofs is not empty %}
+                                <div class="mt-4">
+                                    <h5 class="text-sm font-medium text-gray-300 mb-2">Preuves</h5>
+                                    <div class="prose prose-invert max-w-none">
+                                        {% for proof in element.proofs %}
+                                            <div class="mb-3 p-3 bg-gray-700/50 rounded-lg">{{ proof|raw }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex space-x-2 ml-4">
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </a>
+                            <form method="post" action="{{ path('admin_course_element_delete', {'id': element.id}) }}" onsubmit="return confirm('Supprimer cet élément?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ element.id) }}">
+                                <button type="submit" class="text-gray-400 hover:text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="p-6 text-center text-gray-400">
+                    Aucun élément de cours pour ce chapitre
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Exercices -->
+        <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-lg font-medium">Exercices</h3>
+                <button onclick="document.getElementById('new-exercise-form').classList.toggle('hidden')"
+                        class="text-sm bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded-lg">
+                    + Ajouter un exercice
+                </button>
+            </div>
+
+            <!-- Formulaire d'ajout -->
+            <div id="new-exercise-form" class="hidden px-6 py-4 border-b border-gray-700">
+                {{ form_start(exerciseForm) }}
+
+                <div class="flex flex-col my-3">
+                    {{ form_label(exerciseForm.title) }}
+                    {{ form_widget(exerciseForm.title, {
+                        'attr': {
+                            'class': 'p-3 mt-3'
+                        }
+                    }) }}
+                </div>
+
+                <div class="flex flex-col my-3">
+                    {{ form_label(exerciseForm.exerciseType) }}
+                    {{ form_widget(exerciseForm.exerciseType, {
+                        'attr': {
+                            'class': 'p-3 mt-3'
+                        }
+                    }) }}
+                </div>
+
+
+                <div class="flex flex-col my-3">
+                    {{ form_label(exerciseForm.number) }}
+                    {{ form_widget(exerciseForm.number, {
+                        'attr': {
+                            'class': 'p-3 mt-3'
+                        }
+                    }) }}
+                </div>
+
+                {{ form_row(exerciseForm.statement, {
+                    'attr': {
+                        'class': 'latex-editor mt-3',
+                        'rows': 5
+                    }
+                }) }}
+
+                <!-- Section Hints -->
+                <div class="my-3">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Indices</label>
+                    <div id="hints-container"
+                         data-prototype="{{ form_widget(exerciseForm.hints.vars.prototype)|e('html_attr') }}"
+                         data-index="{{ exerciseForm.hints|length }}">
+                        {% for hint in exerciseForm.hints %}
+                            <div class="hint-item mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                <div class="flex">
+                                    <div class="flex-1">
+                                        {{ form_widget(hint, {
+                                            'attr': {
+                                                'class': 'latex-input',
+                                                'rows': 3
+                                            }
+                                        }) }}
+                                        <div class="latex-preview prose prose-invert max-w-none p-3 bg-gray-900 rounded-lg mt-2"></div>
+                                    </div>
+                                    <button type="button" class="remove-item ml-2 text-red-500 hover:text-red-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-hint" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg mb-4">
+                        + Ajouter un indice
+                    </button>
+                </div>
+
+                <!-- Section Solutions -->
+                <div class="my-3">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Solutions</label>
+                    <div id="solutions-container"
+                         data-prototype="{{ form_widget(exerciseForm.solutions.vars.prototype)|e('html_attr') }}"
+                         data-index="{{ exerciseForm.solutions|length }}">
+                        {% for solution in exerciseForm.solutions %}
+                            <div class="solution-item mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                <div class="flex">
+                                    <div class="flex-1">
+                                        {{ form_widget(solution, {
+                                            'attr': {
+                                                'class': 'latex-input',
+                                                'rows': 3
+                                            }
+                                        }) }}
+                                        <div class="latex-preview prose prose-invert max-w-none p-3 bg-gray-900 rounded-lg mt-2"></div>
+                                    </div>
+                                    <button type="button" class="remove-item ml-2 text-red-500 hover:text-red-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-solution" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg mb-4">
+                        + Ajouter une solution
+                    </button>
+                </div>
+
+                <div class="mt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="document.getElementById('new-exercise-form').classList.add('hidden')"
+                            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+                        Enregistrer
+                    </button>
+                </div>
+                {{ form_end(exerciseForm) }}
+            </div>
+
+            <!-- Liste des exercices existants -->
+            <div class="divide-y divide-gray-700 flex flex-col">
+                {% for exercise in chapter.exercises %}
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="">
+                                    <span class="font-bold text-xl">{{ exercise.title }}</span>
+                                </div>
+
+                                <div class="flex items-center space-x-3">
+                                    <span class="font-medium">{{ exercise.exerciseType.displayName }}</span>
+                                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full">{{ exercise.exerciseType.name }}</span>
+                                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full">{{ exercise.number }}</span>
+                                </div>
+
+                                <div class="prose prose-invert max-w-none mt-3">
+                                    {{ exercise.statement|raw }}
+                                </div>
+
+                                {% if exercise.hints is not empty %}
+                                    <div class="mt-4">
+                                        <h5 class="text-sm font-medium text-gray-300 mb-2">Indices</h5>
+                                        <div class="prose prose-invert max-w-none">
+                                            {% for hint in exercise.hints %}
+                                                <div class="mb-3 p-3 bg-gray-700/50 rounded-lg">{{ hint|raw }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {% if exercise.solutions is not empty %}
+                                    <div class="mt-4">
+                                        <h5 class="text-sm font-medium text-gray-300 mb-2">Solutions</h5>
+                                        <div class="prose prose-invert max-w-none">
+                                            {% for solution in exercise.solutions %}
+                                                <div class="mb-3 p-3 bg-gray-700/50 rounded-lg">{{ solution|raw }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex space-x-2 ml-4">
+                                <a href="#" class="text-gray-400 hover:text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </a>
+                                <form method="post" action="{{ path('admin_exercise_delete', {'id': exercise.id}) }}" onsubmit="return confirm('Supprimer cet exercice?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ exercise.id) }}">
+                                    <button type="submit" class="text-gray-400 hover:text-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-6 text-center text-gray-400">
+                        Aucun exercice pour ce chapitre
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction générique pour gérer les collections
+            /*function setupCollection(containerId, addButtonId, itemClass) {
+                const container = document.getElementById(containerId);
+                const addButton = document.getElementById(addButtonId);
+
+                if (!container || !addButton) return;
+
+                const prototype = container.dataset.prototype;
+
+                // Ajouter un élément
+                addButton.addEventListener('click', function() {
+                    const index = container.dataset.index;
+                    const newItem = document.createElement('div');
+                    newItem.className = `${itemClass} mb-4 p-4 bg-gray-700 rounded-lg border border-gray-600`;
+
+                    newItem.innerHTML = `
+                <div class="flex">
+                    <div class="flex-1">
+                        ${prototype.replace(/__name__/g, index)}
+                        <div class="latex-preview prose prose-invert max-w-none p-3 bg-gray-900 rounded-lg mt-2"></div>
+                    </div>
+                    <button type="button" class="remove-item ml-2 text-red-500 hover:text-red-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+                    container.appendChild(newItem);
+                    container.dataset.index = parseInt(index) + 1;
+
+                    // Activer le rendu LaTeX
+                    setupLatexPreview(newItem);
+                });
+
+                // Initialiser les éléments existants
+                container.querySelectorAll(`.${itemClass}`).forEach(item => {
+                    setupLatexPreview(item);
+                });
+            }
+
+            // Fonction pour configurer la prévisualisation LaTeX
+            function setupLatexPreview(container) {
+                const input = container.querySelector('.latex-input');
+                const preview = container.querySelector('.latex-preview');
+
+                if (!input || !preview) return;
+
+                // Initialiser la prévisualisation
+                preview.innerHTML = input.value;
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise([preview]);
+                }
+
+                // Mettre à jour lors de la saisie
+                input.addEventListener('input', function() {
+                    preview.innerHTML = this.value;
+                    if (typeof MathJax !== 'undefined') {
+                        MathJax.typesetPromise([preview]);
+                    }
+                });
+            }
+
+            // Configurer les 4 collections
+            setupCollection('details-container', 'add-detail', 'detail-item');
+            setupCollection('proofs-container', 'add-proof', 'proof-item');
+            setupCollection('hints-container', 'add-hint', 'hint-item');
+            setupCollection('solutions-container', 'add-solution', 'solution-item');*/
+
+            // Configurer les éditeurs principaux
+            document.querySelectorAll('.latex-editor').forEach(editor => {
+                try {
+                    const previewId = `preview-${editor.id}`;
+                    const preview = document.createElement('div');
+                    preview.id = previewId;
+                    preview.className = 'prose prose-invert max-w-none p-4 bg-gray-900 rounded-lg mt-2';
+                    editor.after(preview);
+
+                    editor.addEventListener('input', function () {
+                        preview.innerHTML = this.value;
+                        if (typeof MathJax !== 'undefined') {
+                            MathJax.typesetPromise([preview]);
+                        }
+                    });
+
+                    // Initial render
+                    preview.innerHTML = editor.value;
+                    if (typeof MathJax !== 'undefined') {
+                        MathJax.typesetPromise([preview]);
+                    }
+                } catch (ignored) {}
+            });
+
+            // Gestion générique de suppression
+            document.addEventListener('click', function(e) {
+                if (e.target && (e.target.classList.contains('remove-item') || e.target.closest('.remove-item'))) {
+                    e.preventDefault();
+                    const button = e.target.classList.contains('remove-item') ? e.target : e.target.closest('.remove-item');
+                    button.closest('[class$="-item"]').remove();
+                }
+            });
+        });
+    </script>
+{% endblock %}

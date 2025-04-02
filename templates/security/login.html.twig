@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+        <div class="w-full max-w-md">
+            <div class="mb-8 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                </svg>
+                <h1 class="text-3xl font-bold text-white mt-4">Admin Panel</h1>
+                <p class="text-gray-400 mt-2">Connectez-vous pour accéder au dashboard</p>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+                <div class="p-8">
+                    {% if error %}
+                        <div class="mb-4 p-3 bg-red-900/30 border border-red-700 text-red-300 rounded-lg text-sm">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" class="space-y-6">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div>
+                            <label for="inputEmail" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                            <input id="inputEmail" name="email" type="email" autocomplete="email" required
+                                   class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                   placeholder="votre@email.com" value="{{ last_username }}">
+                        </div>
+
+                        <div>
+                            <label for="inputPassword" class="block text-sm font-medium text-gray-300 mb-1">Mot de passe</label>
+                            <input id="inputPassword" name="password" type="password" autocomplete="current-password" required
+                                   class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                   placeholder="••••••••">
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember_me" name="_remember_me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded bg-gray-700">
+                                <label for="remember_me" class="ml-2 block text-sm text-gray-300">Se souvenir de moi</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                            Se connecter
+                        </button>
+                    </form>
+                </div>
+                <div class="px-8 py-4 bg-gray-700/50 border-t border-gray-700 text-center">
+                    <p class="text-gray-400 text-sm">© 2023 Admin Panel. Tous droits réservés.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

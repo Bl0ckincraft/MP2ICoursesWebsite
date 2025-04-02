@@ -1,0 +1,29 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block page_title %}Nouveau chapitre - {{ subject.displayName }}{% endblock %}
+
+{% block content %}
+    <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-700">
+            <h2 class="text-xl font-semibold">Nouveau chapitre pour {{ subject.displayName }}</h2>
+        </div>
+
+        <div class="p-6">
+            {{ form_start(form) }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{ form_row(form.name) }}
+                {{ form_row(form.displayName) }}
+                {{ form_row(form.number) }}
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <a href="{{ path('admin_dashboard') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                    Annuler
+                </a>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+                    Créer le chapitre
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
