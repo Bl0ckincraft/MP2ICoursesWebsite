@@ -29,6 +29,7 @@ class FExerciseType extends AbstractType
             ->add('exerciseType', EntityType::class, [
                 'class' => ExType::class,
                 'choice_label' => 'displayName',
+                'choice_value' => 'id',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('t')
                         ->orderBy('t.displayName', 'ASC');

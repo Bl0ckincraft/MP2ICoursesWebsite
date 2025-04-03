@@ -116,7 +116,7 @@ class CourseElement
     {
         return [
             "id" => $this->id,
-            "element_type" => $this->elementType,
+            "element_type" => $this->elementType->__serialize(),
             "number" => $this->number,
             "statement" => $this->statement,
             "details" => $this->details,

@@ -130,7 +130,7 @@ class Exercise
     {
         return [
             "id" => $this->id,
-            "exercice_type" => $this->exerciseType,
+            "exercise_type" => $this->exerciseType->__serialize(),
             "title" => $this->title,
             "statement" => $this->statement,
             "hints" => $this->hints,

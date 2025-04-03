@@ -167,6 +167,15 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Chapitre non trouvé');
         }
 
+        $chapterForm = $this->createForm(ChapterType::class, $chapter);
+        $chapterForm->handleRequest($request);
+
+        if ($chapterForm->isSubmitted() && $chapterForm->isValid()) {
+            $em->flush();
+
+            return $this->redirectToRoute('admin_chapter_edit', ['id' => $id]);
+        }
+
         // Gestion des éléments de cours
         $newElement = new CourseElement();
         $elementForm = $this->createForm(FCourseElementType::class, $newElement);
@@ -174,8 +183,20 @@ class AdminController extends AbstractController
 
         if ($elementForm->isSubmitted() && $elementForm->isValid()) {
             $newElement->setChapter($chapter);
-            $em->persist($newElement);
-            $em->flush();
+
+            if ($request->get("new_el") == null) {
+                $element = $em->getRepository(CourseElement::class)->find($request->get("edit_el_id"));
+                $element->setChapter($newElement->getChapter());
+                $element->setElementType($newElement->getElementType());
+                $element->setStatement($newElement->getStatement());
+                $element->setNumber($newElement->getNumber());
+                $element->setDetails($newElement->getDetails());
+                $element->setProofs($newElement->getProofs());
+                $em->flush();
+            } else {
+                $em->persist($newElement);
+                $em->flush();
+            }
 
             return $this->redirectToRoute('admin_chapter_edit', ['id' => $id]);
         }
@@ -187,14 +208,28 @@ class AdminController extends AbstractController
 
         if ($exerciseForm->isSubmitted() && $exerciseForm->isValid()) {
             $newExercise->setChapter($chapter);
-            $em->persist($newExercise);
-            $em->flush();
+
+            if ($request->get("new_ex") == null) {
+                $exercise = $em->getRepository(Exercise::class)->find($request->get("edit_ex_id"));
+                $exercise->setExerciseType($newExercise->getExerciseType());
+                $exercise->setChapter($newExercise->getChapter());
+                $exercise->setTitle($newExercise->getTitle());
+                $exercise->setHints($newExercise->getHints());
+                $exercise->setSolutions($newExercise->getSolutions());
+                $exercise->setNumber($newExercise->getNumber());
+                $exercise->setStatement($newExercise->getStatement());
+                $em->flush();
+            } else {
+                $em->persist($newExercise);
+                $em->flush();
+            }
 
             return $this->redirectToRoute('admin_chapter_edit', ['id' => $id]);
         }
 
         return $this->render('admin/chapter_edit.html.twig', [
             'chapter' => $chapter,
+            'chapterForm' => $chapterForm->createView(),
             'elementForm' => $elementForm->createView(),
             'exerciseForm' => $exerciseForm->createView(),
             'page_title' => $chapter->getDisplayName(),

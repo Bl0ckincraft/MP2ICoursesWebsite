@@ -21,6 +21,7 @@ class FCourseElementType extends AbstractType
             ->add('elementType', EntityType::class, [
                 'class' => ElementType::class,
                 'choice_label' => 'displayName',
+                'choice_value' => 'id',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('t')
                         ->orderBy('t.displayName', 'ASC');
