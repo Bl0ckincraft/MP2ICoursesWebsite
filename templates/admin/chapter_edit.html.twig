@@ -172,7 +172,7 @@
                 {% for element in chapter.elements|sort((a, b) => a.number <=> b.number) %}
                     <div class="p-6">
                         <div class="flex justify-between items-start">
-                            <div class="flex-1 max-w-100">
+                            <div class="flex-1 max-w-full">
                                 <div class="flex items-center space-x-3">
                                     <span class="font-bold text-xl">{{ element.elementType.displayName }} #{{ element.number }}</span>
                                     <span class="text-xs px-2 py-1 bg-gray-700 rounded-full">{{ element.elementType.name }}</span>
