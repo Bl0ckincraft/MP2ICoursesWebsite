@@ -15,6 +15,7 @@ Encore
     //.setManifestKeyPrefix('build/')
     .enablePostCssLoader()
 
+    .enableVersioning()
     /*
      * ENTRY CONFIG
      *
