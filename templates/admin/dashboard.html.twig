@@ -11,7 +11,7 @@
         <!-- Sidebar -->
         <div
                 :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-                class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-r border-gray-700 transform transition-transform duration-300 ease-in-out md:static "
+                class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-r border-gray-700 transform transition-transform duration-300 ease-in-out"
         >
             <div class="p-4 flex items-center justify-between border-b border-gray-700">
                 <h1 class="text-xl font-bold text-white flex items-center">
@@ -20,11 +20,6 @@
                     </svg>
                     Admin Panel
                 </h1>
-                <button id="sidebar-toggle" class="md:hidden text-gray-400 hover:text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
             </div>
 
             <nav class="p-4 space-y-2">
