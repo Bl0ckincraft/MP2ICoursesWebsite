@@ -24,7 +24,9 @@ class ChapterType extends AbstractType
             ])
             ->add('number', IntegerType::class, [
                 'label' => 'Numéro',
-                'attr' => ['class' => 'bg-gray-700 border-gray-600 text-white rounded-lg']
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
+                ]
             ])
             ->add('displayName', TextType::class, [
                 'label' => 'Nom affiché',

@@ -3,9 +3,16 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block body %}
-    <div class="flex h-screen bg-gray-900 text-gray-100">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+             class="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300">
+        </div>
+
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-800 border-r border-gray-700 flex-shrink-0 transition-all duration-300 ease-in-out" id="sidebar">
+        <div
+                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+                class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-r border-gray-700 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:flex-shrink-0"
+        >
             <div class="p-4 flex items-center justify-between border-b border-gray-700">
                 <h1 class="text-xl font-bold text-white flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,12 +83,21 @@
                     <span>Nouveau cours</span>
                 </a>
             </nav>
-        </aside>
+        </div>
 
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top navbar -->
-            <header class="bg-gray-800 border-b border-gray-700 p-4 flex items-center justify-end">
+            <!-- Top navbar -->
+            <header class="bg-gray-800 border-b border-gray-700 p-4 flex items-center justify-between md:justify-end">
+                <!-- Mobile sidebar toggle -->
+                <button @click="sidebarOpen = true" class="md:hidden text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
+                <!-- Logout -->
                 <a href="{{ path('app_logout') }}" class="flex items-center space-x-1 text-gray-300 hover:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

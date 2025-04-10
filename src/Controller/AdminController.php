@@ -366,4 +366,15 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('admin_exercise_types');
     }
+
+    #[Route('/admin/chapter/{id}/delete', name: 'admin_chapter_delete', methods: ['POST'])]
+    public function deleteChapter(Chapter $chapter, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$chapter->getId(), $request->request->get('_token'))) {
+            $em->remove($chapter);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('admin_dashboard');
+    }
 }
