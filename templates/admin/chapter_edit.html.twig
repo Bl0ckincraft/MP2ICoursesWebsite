@@ -173,9 +173,9 @@
                     <div class="p-6">
                         <div class="flex justify-between items-start">
                             <div class="flex-1 max-w-full">
-                                <div class="flex flex-row items-center space-x-3 w-full">
+                                <div class="flex flex-row items-center w-full">
                                     <span class="font-bold text-xl">{{ element.elementType.displayName }} #{{ element.number }}</span>
-                                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full">{{ element.elementType.name }}</span>
+                                    <span class="ms-3 text-xs px-2 py-1 bg-gray-700 rounded-full">{{ element.elementType.name }}</span>
 
                                     <div class="ms-auto flex space-x-2 ml-4">
                                         <a onclick="editElement(JSON.parse('{{ element.__serialize() | json_encode | e("js") }}'))" class="text-gray-400 hover:text-white">
